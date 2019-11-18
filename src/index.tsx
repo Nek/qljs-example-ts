@@ -1,13 +1,11 @@
 import * as serviceWorker from './serviceWorker';
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState} from 'react'
 import './parsers'
-import {init, component, QLComponent, Tag, Params} from 'qljs'
+import {init, component, Tag, Params, QLEnv} from 'qljs'
 import uuid from 'uuid'
 
-import { ShortTerm, QLProps } from 'qljs'
-
-const Todo = component(['todoId', 'todoText'], (props: QLProps) => {
+const Todo = component(['todoId', 'todoText'], (props: QLEnv) => {
     const { todoText, transact } = props
     return (
         <li>
@@ -15,7 +13,7 @@ const Todo = component(['todoId', 'todoText'], (props: QLProps) => {
             {
                 <button
                     onClick={() => {
-                        transact([['todo_delete', {}]])
+                        transact([['todo_delete']])
                     }}>
                     x
                 </button>
@@ -24,10 +22,10 @@ const Todo = component(['todoId', 'todoText'], (props: QLProps) => {
     )
 })
 
-Todo.displayName = 'Todo'
+const Description = component(['todoDescription'], ({todoDescription}: QLEnv) => <h1>{todoDescription}</h1>)
 
-const Area: QLComponent = component(['areaId', 'areaTitle', ['areaTodos', Todo]] , (props: QLProps) => {
-    const { areaTitle, areaTodos, render }: QLProps = props
+const Area = component(['areaId', 'areaTitle', ['areaTodos', Todo]] , (props: QLEnv) => {
+    const { areaTitle, areaTodos, render }: QLEnv = props
     return (
         <ul>
             <label key="label">{areaTitle}</label>
@@ -36,18 +34,14 @@ const Area: QLComponent = component(['areaId', 'areaTitle', ['areaTodos', Todo]]
     )
 })
 
-Area.displayName = 'Area'
-
-const AreaOption = component(['areaId', 'areaTitle'], props => {
+const AreaOption = component(['areaId', 'areaTitle'], (props: QLEnv) => {
     const { areaId, areaTitle } = props
-    return <option value={areaId}>{areaTitle}</option>
+    return <option value={areaId.toString()}>{areaTitle}</option>
 })
-
-AreaOption.displayName = 'AreaOption'
 
 const TodoList = component(
     [['appAreas', Area, AreaOption], 'appLoading'],
-    props => {
+    (props: QLEnv) => {
         const { appAreas, appLoading, transact, render } = props
 
         useEffect(() => {
@@ -94,8 +88,6 @@ const TodoList = component(
         )
     },
 )
-
-TodoList.displayName = 'TodoList'
 
 let state = {
     loading: true,
