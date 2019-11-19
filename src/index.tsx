@@ -1,13 +1,12 @@
 import * as serviceWorker from './serviceWorker';
 
-import React, { useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import './parsers'
-import {init, component, Tag, Params, QLEnv} from 'qljs'
+import {component, init, Params, Props, Tag} from 'qljs'
 import uuid from 'uuid'
-import {isBoolean} from "util";
 
-const Todo = component(['todoId', 'todoText'], (props: QLEnv) => {
-    const { todoText, transact } = props
+const Todo = component(['todoId', 'todoText'], (props: Props) => {
+    const {todoText, transact} = props;
     return (
         <li>
             {todoText}
@@ -21,37 +20,35 @@ const Todo = component(['todoId', 'todoText'], (props: QLEnv) => {
             }
         </li>
     )
-})
+});
 
-const Description = component(['todoDescription'], ({todoDescription}: QLEnv) => <h1>{todoDescription}</h1>)
-
-const Area = component(['areaId', 'areaTitle', ['areaTodos', Todo]] , (props: QLEnv) => {
-    const { areaTitle, areaTodos, render }: QLEnv = props
+const Area = component(['areaId', 'areaTitle', ['areaTodos', Todo]], (props: Props) => {
+    const {areaTitle, areaTodos, render}: Props = props;
     return (
         <ul>
             <label key="label">{areaTitle}</label>
             <div>{render(areaTodos, Todo)}</div>
         </ul>
     )
-})
+});
 
-const AreaOption = component(['areaId', 'areaTitle'], (props: QLEnv) => {
-    const { areaId, areaTitle } = props
+const AreaOption = component(['areaId', 'areaTitle'], (props: Props) => {
+    const {areaId = '', areaTitle} = props;
     return <option value={areaId.toString()}>{areaTitle}</option>
-})
+});
 
 const TodoList = component(
     [['appAreas', Area, AreaOption], 'appLoading'],
-    (props: QLEnv) => {
-        const { appAreas, appLoading, transact, render } = props
+    (props: Props) => {
+        const {appAreas, appLoading, transact, render} = props;
 
         useEffect(() => {
             transact([['app_init']])
             // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [])
+        }, []);
 
-        const [text, setText] = useState('')
-        const [area, setArea] = useState('0')
+        const [text, setText] = useState('');
+        const [area, setArea] = useState('0');
 
         return (
             <div>
@@ -59,7 +56,7 @@ const TodoList = component(
                     <div key="loader">Loading...</div>
                 ) : (
                     <div key="todo-list">
-                        <input onChange={e => setText(e.target.value)} value={text} />
+                        <input onChange={e => setText(e.target.value)} value={text}/>
                         <select
                             onChange={e => {
                                 setArea(e.target.value.toString())
@@ -77,7 +74,7 @@ const TodoList = component(
                                             id: uuid(),
                                         },
                                     ],
-                                ])
+                                ]);
                                 setText('')
                             }}>
                             Add
@@ -88,7 +85,7 @@ const TodoList = component(
             </div>
         )
     },
-)
+);
 
 
 export type TodoState = {
@@ -114,7 +111,7 @@ let state: AppState = {
     initialized: false,
     todos: [],
     areas: [],
-}
+};
 
 const sendMutate = (tag: Tag, params: Params) =>
     fetch('/api', {
@@ -125,19 +122,19 @@ const sendMutate = (tag: Tag, params: Params) =>
         body: JSON.stringify([tag, params]),
     })
         .then(response => response.json())
-        .then(result => [result])
+        .then(result => [result]);
 
 const remoteHandler = (tag: Tag, params: Params) => {
-    const hasTag = new Set(['app_init', 'todo_new', 'todo_delete']).has(tag)
+    const hasTag = new Set(['app_init', 'todo_new', 'todo_delete']).has(tag);
 
     if (typeof params === 'undefined') {
         return hasTag
     }
 
     return hasTag ? sendMutate(tag, params) : Promise.resolve([])
-}
+};
 
-const mount = init({ state, remoteHandler })
+const mount = init({state, remoteHandler});
 
 const element = document.getElementById('root');
 if (element !== null) {
