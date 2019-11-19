@@ -109,8 +109,8 @@ sync('todo_delete', (term: Term) => {
 
 sync('app_init', (term: Term, result: { todos: TodoState[]; areas: AreaState[]; }, env: Props, state: AppState) => {
     delete state.loading;
-        state.todos = result.todos;
-        state.areas = result.areas;
+    state.todos = result.todos;
+    state.areas = result.areas;
 });
 
 sync('todo_new', ([tag, { id: todoId }]: Term, result: TodoState, env: Params, state: AppState) => {
