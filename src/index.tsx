@@ -4,6 +4,7 @@ import React, { useEffect, useState} from 'react'
 import './parsers'
 import {init, component, Tag, Params, QLEnv} from 'qljs'
 import uuid from 'uuid'
+import {isBoolean} from "util";
 
 const Todo = component(['todoId', 'todoText'], (props: QLEnv) => {
     const { todoText, transact } = props
@@ -89,7 +90,26 @@ const TodoList = component(
     },
 )
 
-let state = {
+
+export type TodoState = {
+    id: string,
+    text: string,
+    area: string,
+}
+
+export type AreaState = {
+    id: string,
+    title: string,
+}
+
+export type AppState = {
+    loading: boolean,
+    initialized: boolean,
+    todos: TodoState[],
+    areas: AreaState[]
+}
+
+let state: AppState = {
     loading: true,
     initialized: false,
     todos: [],
