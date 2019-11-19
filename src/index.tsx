@@ -13,7 +13,7 @@ const Todo = component(['todoId', 'todoText'], (props: Props) => {
             {
                 <button
                     onClick={() => {
-                        transact([['todo_delete']])
+                        transact(['todo_delete'])
                     }}>
                     x
                 </button>
@@ -43,7 +43,7 @@ const TodoList = component(
         const {appAreas, appLoading, transact, render} = props;
 
         useEffect(() => {
-            transact([['app_init']])
+            transact(['app_init'])
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, []);
 
@@ -86,7 +86,6 @@ const TodoList = component(
         )
     },
 );
-
 
 export type TodoState = {
     id: string,
